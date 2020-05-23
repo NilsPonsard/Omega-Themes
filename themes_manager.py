@@ -3,7 +3,7 @@ import argparse
 import os
 import json
 import shutil
-
+import urllib.request
 
 def get_icons_list():
     """
@@ -11,7 +11,6 @@ def get_icons_list():
     """
     with open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "icons.json", "r") as json_file:
         data = json.load(json_file)
-    
     return data
 
 def get_data(theme):
@@ -95,7 +94,7 @@ def write_palette_h(data, file_p):
 
 def main(args):
     if (args.list):
-        print(" ==== Avaliable themes ====");
+        print(" ==== Official themes ====");
         for file_info in os.listdir(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "themes"):
             filename = os.path.splitext(file_info)[0]
             print(filename)
@@ -108,15 +107,22 @@ def main(args):
         icons = get_icons_list()
         
         icon_path = os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "icons" + os.path.sep + data["icons"] + os.path.sep + icons[args.output.replace(args.build_dir, "")]
-        
+       
         # Check if the file exists
         if os.path.isfile(icon_path):
             # If yes, copy from theme
             shutil.copyfile(icon_path, args.output)
         else:
-            # If no, copy from src
-            print(" (!!)   Icon " + icons[args.output.replace(args.build_dir, "")] + " not found in icon theme " + data["icons"] + ". Using default!")
-            shutil.copyfile(args.output.replace(args.build_dir, ""), args.output)
+            #try to download from github
+            try:
+                response = urllib.request.urlopen("https://raw.githubusercontent.com/"+data["icons"]+"/"+icons[args.output.replace(args.build_dir, "")])
+                outFile = open(args.output,"wb")
+                data = response.read()
+                outFile.write(data)
+            except:
+                # If no, copy from src
+                print(" (!!)   Icon " + icons[args.output.replace(args.build_dir, "")] + " not found in icon theme " + data["icons"] + ". Using default!")
+                shutil.copyfile(args.output.replace(args.build_dir, ""), args.output)
     else:
         if (args.stdout):
             write_palette_h(data, sys.stdout)
