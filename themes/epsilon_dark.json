@@ -52,7 +52,9 @@
             "Number": "009999",
             "Keyword": "ff000c",
             "Operator": "d73a49",
-            "String": "032f62"
+            "String": "032f62",
+            "LineNumberBackground": "2b281f",
+            "LineNumberText" : "95938f"
         },
         "Probability": {
             "Curve": "ffb734",
