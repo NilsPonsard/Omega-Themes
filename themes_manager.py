@@ -93,8 +93,25 @@ def write_palette_h(data, file_p):
 # data = get_data(args.theme)
 
 def main(args):
+    if (args.download):
+        theme_url = args.theme
+        theme_name = args.theme.replace("/","_")
+        print("\nDownloading theme :\n" + theme_url)
+        # download the theme.json file from the repo
+        try:
+            resp_theme_json = urllib.request.urlopen("https://raw.githubusercontent.com/"+theme_url+"/theme.json")
+            data = resp_theme_json.read()
+            theme_json_file = open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "themes" + os.path.sep + theme_name + ".json","wb")
+            print("\nSaving as '" + theme_name + "'" )
+            theme_json_file.write(data)
+            print("\nTheme sucessfully downloaded, exiting.")
+        except :
+            print("Error in downloading the theme, is the name valid ?")
+            sys.exit(1)
+        sys.exit(0)
+    
     if (args.list):
-        print(" ==== Official themes ====");
+        print(" ==== Available themes ====");
         for file_info in os.listdir(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "themes"):
             filename = os.path.splitext(file_info)[0]
             print(filename)
@@ -119,6 +136,11 @@ def main(args):
                 outFile = open(args.output,"wb")
                 data = response.read()
                 outFile.write(data)
+                # cache files 
+                cache_file = open(icon_path,"wb")
+                cache_file.write(data)
+
+
             except:
                 # If no, copy from src
                 print(" (!!)   Icon " + icons[args.output.replace(args.build_dir, "")] + " not found in icon theme " + data["icons"] + ". Using default!")
@@ -138,6 +160,7 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--list", help="list themes", action="store_true")
     parser.add_argument("-i", "--icon", help="outputs an icon instead of a header", action="store_true")
     parser.add_argument("--stdout", help="print palette.h to stdout", action="store_true")
+    parser.add_argument("-d", "--download", help="download a theme from github", action="store_true")
 
     args = parser.parse_args()
     main(args)
