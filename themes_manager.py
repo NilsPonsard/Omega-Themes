@@ -95,14 +95,16 @@ def write_palette_h(data, file_p):
 def main(args):
     if (args.download):
         theme_url = args.theme
+        # can’t save a file with slashes so replacing it with underscores
         theme_name = args.theme.replace("/","_")
         print("\nDownloading theme :\n" + theme_url)
         # download the theme.json file from the repo
         try:
             resp_theme_json = urllib.request.urlopen("https://raw.githubusercontent.com/"+theme_url+"/theme.json")
             data = resp_theme_json.read()
-            theme_json_file = open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "themes" + os.path.sep + theme_name + ".json","wb")
+
             print("\nSaving as '" + theme_name + "'" )
+            theme_json_file = open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "themes" + os.path.sep + theme_name + ".json","wb")
             theme_json_file.write(data)
             print("\nTheme sucessfully downloaded, exiting.")
         except :
@@ -136,13 +138,8 @@ def main(args):
                 outFile = open(args.output,"wb")
                 data = response.read()
                 outFile.write(data)
-                # cache files 
-                cache_file = open(icon_path,"wb")
-                cache_file.write(data)
-
-
             except:
-                # If no, copy from src
+                # If download failed, copy from src
                 print(" (!!)   Icon " + icons[args.output.replace(args.build_dir, "")] + " not found in icon theme " + data["icons"] + ". Using default!")
                 shutil.copyfile(args.output.replace(args.build_dir, ""), args.output)
     else:
