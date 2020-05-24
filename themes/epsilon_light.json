@@ -53,8 +53,8 @@
             "Keyword": "ff000c",
             "Operator": "d73a49",
             "String": "032f62",
-            "LineNumberBackground": "e4e6e7",
-            "LineNumberText" : "919ea4"
+            "SideBarBackground": "e4e6e7",
+            "SideBarText" : "919ea4"
         },
         "Probability": {
             "Curve": "ffb734",
